@@ -1,0 +1,3 @@
+[submodule "server"]
+	path = server
+	url = https://github.com/andrianMelnic29/PDGT_Project_Server.git
