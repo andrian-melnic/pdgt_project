@@ -1,0 +1,251 @@
+components:
+  #-------------------------------
+  # Reusable schemas (data models)
+  #-------------------------------
+  schemas:
+    registered_user:  # Can be referenced as '#/components/schemas/registered_user'
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+    user:             # Can be referenced as '#/components/schemas/user'
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        token:
+          type: string
+    location:         # Can be referenced as '#/components/schemas/location'
+      type: object
+      properties:
+        _id:
+          type: string
+        lat:
+          type: string
+        lng:
+          type: string
+        address:
+          type: string
+        addedBy:
+          type: string
+    new_location:         # Can be referenced as '#/components/schemas/new_location'
+      type: object
+      properties:
+        lat:
+          type: string
+        lng:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+openapi: 3.0.1
+info:
+  title: defaultTitle
+  description: defaultDescription
+  version: '0.1'
+servers:
+  - url: 'https://pdgt-project-app.herokuapp.com'
+paths:
+  /users/register:
+    post:
+      description: Crea un nuovo utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    password:
+                      type: string
+                    email:
+                      type: string
+            examples:
+              '0':
+                value: "{\r\n  \"user\": {\r\n    \"email\": \"marco.rossi@email.com\",\r\n    \"password\": \"Asdf1234\"\r\n  }\r\n}"
+              '1':
+                value: "{\r\n  \"user\": {\r\n    \"email\": \"new_user@email.com\",\r\n    \"password\": \"5trongPassword\"\r\n  }\r\n}"
+      responses:
+        '200':
+          description: Id e email del utente appena creato
+          content:
+            application/json; charset=utf-8:
+              schema: 
+                $ref: '#/components/schemas/registered_user'
+                        
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /users/current:
+    get:
+      security:
+        - bearerAuth: []
+      description: Utente attualmente registrato (usata in developement)
+      responses:
+        '200':
+          description: Utente attualmente registrato
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/user'
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /drink_water/new:
+    post:
+      security:
+        - bearerAuth: []
+      description: Aggiunge una nuova posizione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/new_location'
+            examples:
+              '0':
+                value: "{\r\n    \"latitude\": \"43.714501\",\r\n    \"longitude\": \"12.855436\"\r\n}"
+              '1':
+                value: "{\r\n    \"latitude\": \"43.714501\",\r\n    \"longitude\": \"12.855436\"\r\n}"
+      responses:
+        '200':
+          description: Posizione creata
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/location'
+        '401':
+          description: Non autorizzato
+          content:
+            text/html; charset=utf-8:
+              schema:
+                type: string
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /drink_water/location/delete:
+    delete:
+      security:
+        - bearerAuth: []
+      description: Elimina la posizione
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          example: 5e88a0e07bf2820017de4cca
+      responses:
+        '200':
+          description: Posizione eliminata
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/location'
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /drink_water/location/update:
+    put:
+      security:
+        - bearerAuth: []
+      description: Modifica la posizione
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          example: 5e88a0e07bf2820017de4cca
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/new_location'
+            examples:
+              '0':
+                value: "{\r\n    \"latitude\": \"43.720920\",\r\n    \"longitude\": \"12.843275\"\r\n}"
+      responses:
+        '200':
+          description: Posizione modificata
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/location'
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /drink_water/location:
+    get:
+      description: Restituisce una posizione con un determinato id (non usata dal client)
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          example: 5e85c9a832632d07b07822a1
+      responses:
+        '200':
+          description: Posizione richiesta
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/location'
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /drink_water/:
+    get:
+      description: Restituisce un array con tutte le posizioni
+      responses:
+        '200':
+          description: Array con tutte le posizioni
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/location'
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
+  /users/login:
+    post:
+      description: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    password:
+                      type: string
+                    email:
+                      type: string
+            examples:
+              '0':
+                value: "{\r\n  \"user\": {\r\n    \"email\": \"new_user@email.com\",\r\n    \"password\": \"5trongPassword\"\r\n  }\r\n}"
+      responses:
+        '200':
+          description: Utente loggato con token
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/user'
+      servers:
+        - url: 'https://pdgt-project-app.herokuapp.com'
+    servers:
+      - url: 'https://pdgt-project-app.herokuapp.com'
