@@ -424,7 +424,9 @@ app.get('*', function(req, res){
   git push heroku master
   ```
 ## Utilizzo del servizio Web
-
+Credenziali di test:
+- Email: test@email.com
+- Password: Asdf1234
 ### Versione online
 Aprire il seguente link:  https://pdgt-project-app.herokuapp.com.
 
