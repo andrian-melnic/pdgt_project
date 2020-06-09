@@ -434,10 +434,6 @@ Il primo avvio può sembrare lento perchè Heroku deve avviare il dyno.
 
 L'app funziona sia su desktop che su smartphone.
 
-### Per l'utilizzo in locale:
-- Nella cartella del client eseguire `npm install` e `npm run build`.
-- Nella cartella del server eseguire `npm install` e `npm start`.
-
 ### Screenshot
 
 #### - Primo avvio (autorizzazione geolocalizzazione)
